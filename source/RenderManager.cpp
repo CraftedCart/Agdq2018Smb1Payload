@@ -63,14 +63,6 @@ namespace RenderManager {
         GX_InvVtxCache();
         GX_InvalidateTexAll();
 
-        static GXColor litColors[] = {
-            {0x00, 0xAE, 0xEF, 0xFF}, //Light color 1
-            {0x40, 0x40, 0x40, 0xFF}, //Ambient 1
-            {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
-        };
-        guVector lightPos = {0.0f, 0.0f, 5000.0f};
-        setLight(viewMatrix, lightPos, litColors[0], litColors[1], litColors[2]);
-
         Mtx modelView;
         guMtxIdentity(modelView);
         drawSceneGraph(rootNode, modelView);
@@ -102,6 +94,14 @@ namespace RenderManager {
     }
 
     void drawMeshNode(MeshSceneNode *node, Mtx transformMatrix) {
+        static GXColor litColors[] = {
+            {0x00, 0xAE, 0xEF, 0xFF}, //Light color 1
+            {0x40, 0x40, 0x40, 0xFF}, //Ambient 1
+            {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
+        };
+        guVector lightPos = {0.0f, 0.0f, 5000.0f};
+        setLight(viewMatrix, lightPos, litColors[0], litColors[1], litColors[2]); //Intentionally not using the transformMatrix
+
         Mtx modelView;
         memcpy(modelView, transformMatrix, sizeof(Mtx));
 
