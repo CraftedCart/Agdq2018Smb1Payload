@@ -13,7 +13,7 @@ namespace RenderManager {
     guVector camera = {0.0f, 0.0f, 50.0f};
     guVector up = {0.0f, 1.0f, 0.0F};
     guVector look = {0.0f, 0.0f, -1.0f};
-    GXColor backgroundColor = {0, 0, 0, 255};
+    GXColor backgroundColor = {33, 33, 33, 255};
     void *fifoBuffer = NULL;
 
     void init() {
@@ -96,7 +96,7 @@ namespace RenderManager {
     void drawMeshNode(MeshSceneNode *node, Mtx transformMatrix) {
         static GXColor litColors[] = {
             {0x00, 0xAE, 0xEF, 0xFF}, //Light color 1
-            {0x40, 0x40, 0x40, 0xFF}, //Ambient 1
+            {0x10, 0x10, 0x10, 0xFF}, //Ambient 1
             {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
         };
         guVector lightPos = {0.0f, 0.0f, 5000.0f};
