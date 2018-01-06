@@ -10,23 +10,23 @@
 GXRModeObj *screenMode;
 static void *frameBuffer;
 static vu8 readyForCopy;
-#define FIFO_SIZE (256*1024)
+#define FIFO_SIZE (256 * 1024)
 
-void update_screen(Mtx viewMatrix);
-static void copy_buffers(u32 unused);
-void setLight(Mtx view, guVector lightPos, GXColor litcol, GXColor ambcol, GXColor matcol);
+void updateScreen(Mtx viewMatrix);
+void copyBuffers(u32 unused);
+void setLight(Mtx view, guVector lightPos, GXColor litCol, GXColor ambCol, GXColor matCol);
 
-static GXColor litcolors[] = {
-        { 0xFF, 0x00, 0x00, 0xFF }, //Light color 1
-        { 0x40, 0x40, 0x40, 0xFF }, //Ambient 1
-        { 0xFF, 0xFF, 0xFF, 0xFF }  //Material 1
+static GXColor litColors[] = {
+    {0xFF, 0x00, 0x00, 0xFF}, //Light color 1
+    {0x40, 0x40, 0x40, 0xFF}, //Ambient 1
+    {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
 };
 
 int main(void) {
     Mtx view;
     Mtx projection;
     PADStatus pads[4];
-    GXColor backgroundColor	= {0, 0, 0,	255};
+    GXColor backgroundColor = {0, 0, 0, 255};
     void *fifoBuffer = NULL;
 
     VIDEO_Init();
@@ -38,34 +38,33 @@ int main(void) {
 
     VIDEO_Configure(screenMode);
     VIDEO_SetNextFramebuffer(frameBuffer);
-    VIDEO_SetPostRetraceCallback(copy_buffers);
+    VIDEO_SetPostRetraceCallback(copyBuffers);
     VIDEO_SetBlack(FALSE);
     VIDEO_Flush();
 
-    fifoBuffer = MEM_K0_TO_K1(memalign(32,FIFO_SIZE));
+    //FIFO stores the graphics processor command buffer
+    fifoBuffer = MEM_K0_TO_K1(memalign(32, FIFO_SIZE));
     memset(fifoBuffer, 0, FIFO_SIZE);
 
     GX_Init(fifoBuffer, FIFO_SIZE);
-    GX_SetCopyClear(backgroundColor, 0x00ffffff);
-    GX_SetViewport(0,0,screenMode->fbWidth,screenMode->efbHeight,0,1);
-    GX_SetDispCopyYScale((f32)screenMode->xfbHeight/(f32)screenMode->efbHeight);
-    GX_SetScissor(0,0,screenMode->fbWidth,screenMode->efbHeight);
-    GX_SetDispCopySrc(0,0,screenMode->fbWidth,screenMode->efbHeight);
-    GX_SetDispCopyDst(screenMode->fbWidth,screenMode->xfbHeight);
-    GX_SetCopyFilter(screenMode->aa,screenMode->sample_pattern,
-            GX_TRUE,screenMode->vfilter);
-    GX_SetFieldMode(screenMode->field_rendering,
-            ((screenMode->viHeight==2*screenMode->xfbHeight)?GX_ENABLE:GX_DISABLE));
+    GX_SetCopyClear(backgroundColor, 0x00FFFFFF);
+    GX_SetViewport(0, 0, screenMode->fbWidth, screenMode->efbHeight, 0, 1);
+    GX_SetDispCopyYScale((f32) screenMode->xfbHeight / (f32) screenMode->efbHeight);
+    GX_SetScissor(0, 0, screenMode->fbWidth, screenMode->efbHeight);
+    GX_SetDispCopySrc(0, 0, screenMode->fbWidth, screenMode->efbHeight);
+    GX_SetDispCopyDst(screenMode->fbWidth, screenMode->xfbHeight);
+    GX_SetCopyFilter(screenMode->aa, screenMode->sample_pattern, GX_TRUE, screenMode->vfilter);
+    GX_SetFieldMode(screenMode->field_rendering, ((screenMode->viHeight == 2 * screenMode->xfbHeight) ? GX_ENABLE : GX_DISABLE));
 
     GX_SetCullMode(GX_CULL_NONE);
     GX_CopyDisp(frameBuffer,GX_TRUE);
     GX_SetDispCopyGamma(GX_GM_1_0);
 
-    guVector camera = {0.0F, 0.0F, 50.0F};
-    guVector up = {0.0F, 1.0F, 0.0F};
-    guVector look = {0.0F, 0.0F, -1.0F};
+    guVector camera = {0.0f, 0.0f, 50.0f};
+    guVector up = {0.0f, 1.0f, 0.0F};
+    guVector look = {0.0f, 0.0f, -1.0f};
 
-    guPerspective(projection, 60, 1.33F, 10.0F, 3000.0F);
+    guPerspective(projection, 60, 1.33f, 10.0f, 3000.0f);
     GX_LoadProjectionMtx(projection, GX_PERSPECTIVE);
 
     GX_ClearVtxDesc();
@@ -85,25 +84,26 @@ int main(void) {
 
     while (1) {
         guLookAt(view, &camera, &up, &look);
-        GX_SetViewport(0,0,screenMode->fbWidth,screenMode->efbHeight,0,1);
+        GX_SetViewport(0, 0, screenMode->fbWidth, screenMode->efbHeight, 0, 1);
         GX_InvVtxCache();
         GX_InvalidateTexAll();
-        update_screen(view);
+        updateScreen(view);
+
         PAD_Read(pads);
         if (pads[0].button & PAD_BUTTON_START) {
-            void (*reload)() = (void(*)())0x80001800;
+            void (*reload)() = (void(*)()) 0x80001800;
             reload();
         }
     }
     return 0;
 }
 
-void update_screen(Mtx viewMatrix) {
+void updateScreen(Mtx viewMatrix) {
     Mtx modelView;
 
     guLightPerspective(modelView, 60, 1.33f, 0.5f, 0.5f, 0.5f, 0.5f);
     guVector lightPos = {0.0f, 0.0f, 5000.0f};
-    setLight(viewMatrix, lightPos, litcolors[0], litcolors[1], litcolors[2]);
+    setLight(viewMatrix, lightPos, litColors[0], litColors[1], litColors[2]);
 
     guMtxIdentity(modelView);
     guMtxTransApply(modelView, modelView, 0.0F, 0.0F, -50.0F);
@@ -111,6 +111,7 @@ void update_screen(Mtx viewMatrix) {
 
     GX_LoadPosMtxImm(modelView, GX_PNMTX0);
 
+    // Draw all 6616 tris
     GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 6616 * 3);
 
     for (u16 i = 0; i < 6616 * 3; i += 3) {
@@ -134,31 +135,30 @@ void update_screen(Mtx viewMatrix) {
     return;
 }
 
-static void copy_buffers(u32 count __attribute__ ((unused))) {
-    if (readyForCopy==GX_TRUE) {
+void copyBuffers(u32 count __attribute__ ((unused))) {
+    if (readyForCopy == GX_TRUE) {
         GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
         GX_SetColorUpdate(GX_TRUE);
-        GX_CopyDisp(frameBuffer,GX_TRUE);
+        GX_CopyDisp(frameBuffer, GX_TRUE);
         GX_Flush();
         readyForCopy = GX_FALSE;
     }
 }
 
-void setLight(Mtx view, guVector lightPos, GXColor litcol, GXColor ambcol, GXColor matcol) {
-    GXLightObj lobj;
+void setLight(Mtx view, guVector lightPos, GXColor litCol, GXColor ambCol, GXColor matCol) {
+    GXLightObj lightObj;
 
-    guVecMultiply(view, &lightPos, &lightPos);
+    guVecMultiply(view, &lightPos, &lightPos); //Light pos needs to me multiplied by the view matrix
 
-    GX_InitLightPos(&lobj, lightPos.x, lightPos.y, lightPos.z);
-    /*GX_InitLightShininess*/
-    GX_InitLightColor(&lobj, litcol);
-    GX_LoadLightObj(&lobj, GX_LIGHT0);
+    GX_InitLightPos(&lightObj, lightPos.x, lightPos.y, lightPos.z);
+    GX_InitLightColor(&lightObj, litCol);
+    GX_LoadLightObj(&lightObj, GX_LIGHT0);
 
     //Set number of rasterized color channels
     GX_SetNumChans(1);
     GX_SetChanCtrl(GX_COLOR0, GX_ENABLE, GX_SRC_REG, GX_SRC_REG, GX_LIGHT0, GX_DF_CLAMP, GX_AF_NONE);
 
-    GX_SetChanAmbColor(GX_COLOR0, ambcol);
-    GX_SetChanMatColor(GX_COLOR0, matcol);
+    GX_SetChanAmbColor(GX_COLOR0, ambCol);
+    GX_SetChanMatColor(GX_COLOR0, matCol);
 }
 
