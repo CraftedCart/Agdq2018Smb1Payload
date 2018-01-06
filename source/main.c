@@ -17,7 +17,7 @@ void copyBuffers(u32 unused);
 void setLight(Mtx view, guVector lightPos, GXColor litCol, GXColor ambCol, GXColor matCol);
 
 static GXColor litColors[] = {
-    {0xFF, 0x00, 0x00, 0xFF}, //Light color 1
+    {0x00, 0xAE, 0xEF, 0xFF}, //Light color 1
     {0x40, 0x40, 0x40, 0xFF}, //Ambient 1
     {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
 };
