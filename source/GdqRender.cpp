@@ -56,7 +56,7 @@ namespace GdqRender {
         while (1) {
             gdqLogo->getTransform().rot.y += 0.022;
             gdqLogo->getTransform().rot.z += 0.001;
-            gdqLogo->getTransform().rot.x += 0.001;
+            //gdqLogo->getTransform().rot.x += 0.001;
 
             if (gdqLogo->getTransform().scl.x < 1.0f) {
                 gdqLogo->getTransform().scl.x += 0.01f;
