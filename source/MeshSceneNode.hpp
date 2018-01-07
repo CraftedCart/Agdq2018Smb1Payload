@@ -12,6 +12,7 @@ class MeshSceneNode : public SceneNode {
         bool useVertexColoring = false;
         u16 triangleCount;
         GXTexObj *texture = nullptr;
+        bool isUnlit = false;
 };
 
 #endif

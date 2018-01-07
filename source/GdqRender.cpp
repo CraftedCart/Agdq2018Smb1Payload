@@ -4,6 +4,11 @@
 #include "texcoords.h"
 #include "pallete_tpl.h"
 #include "pallete.h"
+#include "models/spaceverts.h"
+#include "models/spacenorms.h"
+#include "models/spacetexcoords.h"
+#include "space_tpl.h"
+#include "space.h"
 #include "MeshSceneNode.hpp"
 #include "GdqRender.hpp"
 #include "RenderManager.hpp"
@@ -36,6 +41,17 @@ namespace GdqRender {
         gdqLogo->getTransform().pos.z = -50.0f;
         gdqLogo->getTransform().scl = {0.0f, 0.0f, 0.0f};
         scrollContainer->addChild(gdqLogo);
+
+        MeshSceneNode *spaceBg = new MeshSceneNode();
+        spaceBg->meshVertices = MODEL_SPACE_VERTS;
+        spaceBg->meshNormals = MODEL_SPACE_NORMS;
+        spaceBg->meshUvs = MODEL_SPACE_TEXCOORDS;
+        spaceBg->triangleCount = 2;
+        GXTexObj spaceTex = RenderManager::loadTplTextureFromMemory(space_tpl, space_tpl_size, space);
+        spaceBg->texture = &spaceTex;
+        spaceBg->getTransform().pos.z = -300.0f;
+        spaceBg->isUnlit = true;
+        scrollContainer->addChild(spaceBg);
 
         while (1) {
             gdqLogo->getTransform().rot.y += 0.022;

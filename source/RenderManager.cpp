@@ -45,7 +45,7 @@ namespace RenderManager {
         GX_SetFieldMode(screenMode->field_rendering, ((screenMode->viHeight == 2 * screenMode->xfbHeight) ? GX_ENABLE : GX_DISABLE));
 
         GX_SetCullMode(GX_CULL_NONE);
-        GX_CopyDisp(frameBuffer,GX_TRUE);
+        GX_CopyDisp(frameBuffer, GX_TRUE);
         GX_SetDispCopyGamma(GX_GM_1_0);
 
         guPerspective(projectionMatrix, 60, 1.33f, 10.0f, 3000.0f);
@@ -66,6 +66,11 @@ namespace RenderManager {
         Mtx modelView;
         guMtxIdentity(modelView);
         drawSceneGraph(rootNode, modelView);
+
+        GX_DrawDone();
+        RenderManager::readyForCopy = GX_TRUE;
+
+        VIDEO_WaitVSync();
     }
 
     void drawSceneGraph(SceneNode *node, Mtx transformMatrix) {
@@ -99,8 +104,12 @@ namespace RenderManager {
             {0x12, 0x12, 0x12, 0xFF}, //Ambient 1
             {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
         };
-        guVector lightPos = {0.0f, 0.0f, 5000.0f};
-        setLight(transformMatrix, lightPos, litColors[0], litColors[1], litColors[2]); //Intentionally not using the transformMatrix
+        guVector lightPos = {0.0f, 0.0f, -5000.0f};
+        if (!node->isUnlit) {
+            setLight(transformMatrix, lightPos, litColors[0], litColors[1], litColors[2]);
+        } else {
+            GX_SetChanCtrl(GX_COLOR0, GX_DISABLE, GX_SRC_REG, GX_SRC_REG, GX_LIGHT0, GX_DF_CLAMP, GX_AF_NONE);
+        }
 
         Mtx modelView;
         memcpy(modelView, transformMatrix, sizeof(Mtx));
@@ -158,11 +167,6 @@ namespace RenderManager {
         }
 
         GX_End();
-
-        GX_DrawDone();
-        RenderManager::readyForCopy = GX_TRUE;
-
-        VIDEO_WaitVSync();
     }
 
     void setLight(Mtx view, guVector lightPos, GXColor litCol, GXColor ambCol, GXColor matCol) {
