@@ -14,6 +14,14 @@
 #include "models/spacetexcoords.h"
 #include "space_tpl.h"
 #include "space.h"
+//#include "models/neogridverts.h"
+//#include "models/neogridnorms.h"
+//#include "models/neogridtexcoords.h"
+//#include "neogrid_tpl.h"
+//#include "neogrid.h"
+#include "models/neolineverts.h"
+#include "models/neolinenorms.h"
+#include "models/neolinetexcoords.h"
 #include "MeshSceneNode.hpp"
 #include "GdqRender.hpp"
 #include "RenderManager.hpp"
@@ -71,6 +79,16 @@ namespace GdqRender {
         spaceBg->isUnlit = true;
         scrollContainer->addChild(spaceBg);
 
+        MeshSceneNode *neoLine = new MeshSceneNode();
+        neoLine->meshVertices = MODEL_NEOLINE_VERTS;
+        neoLine->meshNormals = MODEL_NEOLINE_NORMS;
+        neoLine->meshUvs = MODEL_NEOLINE_TEXCOORDS;
+        neoLine->triangleCount = 12;
+        neoLine->texture = &pallete2Tex;
+        neoLine->getTransform().pos.z = 0.0f;
+        neoLine->isUnlit = true;
+        scrollContainer->addChild(neoLine);
+
         while (1) {
             gdqLogo->getTransform().rot.y += 0.015;
             gdqLogo->getTransform().rot.z += 0.001;
@@ -94,6 +112,7 @@ namespace GdqRender {
                 gdq2Logo->getTransform().scl.z = 1.0f;
             }
 
+            //GDQ/GDQ2 logo flickering
             if (frameTime > 60) {
                 gdqLogo->setVisible(false);
                 gdq2Logo->setVisible(true);
