@@ -100,7 +100,7 @@ namespace RenderManager {
             {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
         };
         guVector lightPos = {0.0f, 0.0f, 5000.0f};
-        setLight(viewMatrix, lightPos, litColors[0], litColors[1], litColors[2]); //Intentionally not using the transformMatrix
+        setLight(transformMatrix, lightPos, litColors[0], litColors[1], litColors[2]); //Intentionally not using the transformMatrix
 
         Mtx modelView;
         memcpy(modelView, transformMatrix, sizeof(Mtx));
