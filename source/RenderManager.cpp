@@ -95,8 +95,8 @@ namespace RenderManager {
 
     void drawMeshNode(MeshSceneNode *node, Mtx transformMatrix) {
         static GXColor litColors[] = {
-            {0x00, 0xAE, 0xEF, 0xFF}, //Light color 1
-            {0x10, 0x10, 0x10, 0xFF}, //Ambient 1
+            {0xFF, 0xFF, 0xFF, 0xFF}, //Light color 1
+            {0x12, 0x12, 0x12, 0xFF}, //Ambient 1
             {0xFF, 0xFF, 0xFF, 0xFF}  //Material 1
         };
         guVector lightPos = {0.0f, 0.0f, 5000.0f};
@@ -105,28 +105,56 @@ namespace RenderManager {
         Mtx modelView;
         memcpy(modelView, transformMatrix, sizeof(Mtx));
 
+        bool colored = node->useVertexColoring;
+
+        bool textured = false;
+        if (node->texture != nullptr) {
+            GX_LoadTexObj(node->texture, GX_TEXMAP0);
+            GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+            GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+            textured = true;
+        } else {
+            GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+            GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+        }
+
         GX_ClearVtxDesc();
+
         GX_SetVtxDesc(GX_VA_POS, GX_INDEX16);
         GX_SetVtxDesc(GX_VA_NRM, GX_INDEX16);
+        if (colored) GX_SetVtxDesc(GX_VA_CLR0, GX_INDEX16);
+        if (textured) GX_SetVtxDesc(GX_VA_TEX0, GX_INDEX16);
+
         GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
         GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_NRM, GX_NRM_XYZ, GX_F32, 0);
+        if (colored) GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+        if (textured) GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
+
         GX_SetArray(GX_VA_POS, node->meshVertices, 3 * sizeof(f32));
         GX_SetArray(GX_VA_NRM, node->meshNormals, 3 * sizeof(f32));
+        if (colored) GX_SetArray(GX_VA_CLR0, node->meshColors, 4 * sizeof(u8));
+        if (textured) GX_SetArray(GX_VA_TEX0, node->meshUvs, 2 * sizeof(f32));
 
         guMtxConcat(viewMatrix, modelView, modelView);
 
         GX_LoadPosMtxImm(modelView, GX_PNMTX0);
 
-        // Draw all tris
+        //Draw all tris
         GX_Begin(GX_TRIANGLES, GX_VTXFMT0, node->triangleCount * 3);
 
         for (u16 i = 0; i < node->triangleCount * 3; i += 3) {
-            GX_Position1x16((u16) (i));
-            GX_Normal1x16((u16) (i));
-            GX_Position1x16((u16) (i + 1));
-            GX_Normal1x16((u16) (i + 1));
-            GX_Position1x16((u16) (i + 2));
-            GX_Normal1x16((u16) (i + 2));
+            GX_Position1x16(i);
+            GX_Normal1x16(i);
+            if (colored) GX_Color1x16(i);
+            if (textured) GX_TexCoord1x16(i);
+            GX_Position1x16(i + 1);
+            GX_Normal1x16(i + 1);
+            if (colored) GX_Color1x16(i + 1);
+            if (textured) GX_TexCoord1x16(i + 1);
+            GX_Position1x16(i + 2);
+            GX_Normal1x16(i + 2);
+            if (colored) GX_Color1x16(i + 2);
+            if (textured) GX_TexCoord1x16(i + 2);
         }
 
         GX_End();
@@ -152,6 +180,18 @@ namespace RenderManager {
 
         GX_SetChanAmbColor(GX_COLOR0, ambCol);
         GX_SetChanMatColor(GX_COLOR0, matCol);
+    }
+
+    GXTexObj loadTplTextureFromMemory(const u8 tpl[], const u32 length, const s32 textureId) {
+        TPLFile file;
+        GXTexObj texture;
+
+        GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+        GX_SetNumTexGens(1);
+        TPL_OpenTPLFromMemory(&file, (void*) tpl, length);
+        TPL_GetTexture(&file, textureId, &texture);
+
+        return texture;
     }
 
     void copyBuffers(u32 count __attribute__ ((unused))) {

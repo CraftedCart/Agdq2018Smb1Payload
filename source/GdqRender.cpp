@@ -1,5 +1,9 @@
 #include "verts.h"
 #include "norms.h"
+//#include "colors.h"
+#include "texcoords.h"
+#include "pallete_tpl.h"
+#include "pallete.h"
 #include "MeshSceneNode.hpp"
 #include "GdqRender.hpp"
 #include "RenderManager.hpp"
@@ -23,7 +27,12 @@ namespace GdqRender {
         MeshSceneNode *gdqLogo = new MeshSceneNode();
         gdqLogo->meshVertices = MODEL_VERTS;
         gdqLogo->meshNormals = MODEL_NORMS;
+        gdqLogo->meshUvs = MODEL_TEXCOORDS;
+        //gdqLogo->meshColors = MODEL_COLORS;
+        //gdqLogo->useVertexColoring = true;
         gdqLogo->triangleCount = 6616;
+        GXTexObj palleteTex = RenderManager::loadTplTextureFromMemory(pallete_tpl, pallete_tpl_size, pallete);
+        gdqLogo->texture = &palleteTex;
         gdqLogo->getTransform().pos.z = -50.0f;
         gdqLogo->getTransform().scl = {0.0f, 0.0f, 0.0f};
         scrollContainer->addChild(gdqLogo);

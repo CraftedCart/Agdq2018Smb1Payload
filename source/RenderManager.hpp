@@ -20,6 +20,7 @@ namespace RenderManager {
     void drawSceneGraph(SceneNode *rootNode, Mtx transformMatrix);
     void drawMeshNode(MeshSceneNode *node, Mtx transformMatrix);
     void setLight(Mtx view, guVector lightPos, GXColor litCol, GXColor ambCol, GXColor matCol);
+    GXTexObj loadTplTextureFromMemory(const u8 tpl[], const u32 length, const s32 textureId);
     void copyBuffers(u32 count __attribute__ ((unused)));
 }
 
