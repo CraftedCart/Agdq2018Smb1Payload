@@ -4,6 +4,11 @@
 #include "texcoords.h"
 #include "pallete_tpl.h"
 #include "pallete.h"
+#include "models/gdq2verts.h"
+#include "models/gdq2norms.h"
+#include "models/gdq2texcoords.h"
+#include "pallete2_tpl.h"
+#include "pallete2.h"
 #include "models/spaceverts.h"
 #include "models/spacenorms.h"
 #include "models/spacetexcoords.h"
@@ -42,6 +47,19 @@ namespace GdqRender {
         gdqLogo->getTransform().scl = {0.0f, 0.0f, 0.0f};
         scrollContainer->addChild(gdqLogo);
 
+        MeshSceneNode *gdq2Logo = new MeshSceneNode();
+        gdq2Logo->meshVertices = MODEL_GDQ2_VERTS;
+        gdq2Logo->meshNormals = MODEL_GDQ2_NORMS;
+        gdq2Logo->meshUvs = MODEL_GDQ2_TEXCOORDS;
+        gdq2Logo->triangleCount = 12600;
+        GXTexObj pallete2Tex = RenderManager::loadTplTextureFromMemory(pallete2_tpl, pallete2_tpl_size, pallete2);
+        gdq2Logo->texture = &pallete2Tex;
+        gdq2Logo->getTransform().pos.z = -50.0f;
+        gdq2Logo->getTransform().scl = {0.0f, 0.0f, 0.0f};
+        gdq2Logo->setVisible(false);
+        gdq2Logo->getTransform().rot.y = M_PI;
+        scrollContainer->addChild(gdq2Logo);
+
         MeshSceneNode *spaceBg = new MeshSceneNode();
         spaceBg->meshVertices = MODEL_SPACE_VERTS;
         spaceBg->meshNormals = MODEL_SPACE_NORMS;
@@ -54,18 +72,63 @@ namespace GdqRender {
         scrollContainer->addChild(spaceBg);
 
         while (1) {
-            gdqLogo->getTransform().rot.y += 0.022;
+            gdqLogo->getTransform().rot.y += 0.015;
             gdqLogo->getTransform().rot.z += 0.001;
             //gdqLogo->getTransform().rot.x += 0.001;
+            gdq2Logo->getTransform().rot.y += 0.015;
+            gdq2Logo->getTransform().rot.z += 0.001;
 
-            if (gdqLogo->getTransform().scl.x < 1.0f) {
+            if (gdq2Logo->getTransform().scl.x < 1.0f) {
                 gdqLogo->getTransform().scl.x += 0.01f;
                 gdqLogo->getTransform().scl.y += 0.01f;
                 gdqLogo->getTransform().scl.z += 0.01f;
+                gdq2Logo->getTransform().scl.x += 0.01f;
+                gdq2Logo->getTransform().scl.y += 0.01f;
+                gdq2Logo->getTransform().scl.z += 0.01f;
             } else {
                 gdqLogo->getTransform().scl.x = 1.0f;
                 gdqLogo->getTransform().scl.y = 1.0f;
                 gdqLogo->getTransform().scl.z = 1.0f;
+                gdq2Logo->getTransform().scl.x = 1.0f;
+                gdq2Logo->getTransform().scl.y = 1.0f;
+                gdq2Logo->getTransform().scl.z = 1.0f;
+            }
+
+            if (frameTime > 60) {
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(true);
+            }
+            if (frameTime > 68) {
+                gdqLogo->setVisible(true);
+                gdq2Logo->setVisible(false);
+            }
+            if (frameTime > 100) {
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(true);
+            }
+            if (frameTime > 108) {
+                gdqLogo->setVisible(true);
+                gdq2Logo->setVisible(false);
+            }
+            if (frameTime > 120) {
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(true);
+            }
+            if (frameTime > 128) {
+                gdqLogo->setVisible(true);
+                gdq2Logo->setVisible(false);
+            }
+            if (frameTime > 136) {
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(true);
+
+                static bool hasSetGdq2Scale = false;
+                if (!hasSetGdq2Scale) {
+                    gdq2Logo->getTransform().scl.x = 0.5f;
+                    gdq2Logo->getTransform().scl.y = 0.5f;
+                    gdq2Logo->getTransform().scl.z = 0.5f;
+                    hasSetGdq2Scale = true;
+                }
             }
 
             if (frameTime > 600) {
@@ -73,7 +136,8 @@ namespace GdqRender {
             }
 
             if (frameTime > 1200) {
-                gdqLogo->triangleCount = 0; //For performance
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(false);
             }
 
             RenderManager::draw(rootNode);

@@ -6,6 +6,14 @@ SceneNode::~SceneNode() {
     }
 }
 
+void SceneNode::setVisible(bool visible) {
+    this->visible = visible;
+}
+
+bool SceneNode::isVisible() {
+    return visible;
+}
+
 Transform& SceneNode::getTransform() {
     return transform;
 }

@@ -8,12 +8,15 @@
 class SceneNode {
     protected:
         Transform transform;
+        bool visible = true;
         std::vector<SceneNode*> children;
 
     public:
         virtual ~SceneNode();
 
         Transform& getTransform();
+        void setVisible(bool visible);
+        bool isVisible();
         std::vector<SceneNode*>& getChildren();
         void addChild(SceneNode *child);
 };

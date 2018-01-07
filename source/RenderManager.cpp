@@ -75,6 +75,8 @@ namespace RenderManager {
 
     void drawSceneGraph(SceneNode *node, Mtx transformMatrix) {
         for (SceneNode *child : node->getChildren()) {
+            if (!child->isVisible()) continue;
+
             Transform transform = child->getTransform();
             Mtx childMatrix;
             memcpy(childMatrix, transformMatrix, sizeof(Mtx));
