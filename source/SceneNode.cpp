@@ -6,6 +6,8 @@ SceneNode::~SceneNode() {
     }
 }
 
+void SceneNode::tick() {}
+
 void SceneNode::setVisible(bool visible) {
     this->visible = visible;
 }

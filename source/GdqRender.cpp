@@ -28,6 +28,7 @@
 #include "kappa_tpl.h"
 #include "kappa.h"
 #include "MeshSceneNode.hpp"
+#include "EmitterSceneNode.hpp"
 #include "GdqRender.hpp"
 #include "RenderManager.hpp"
 #include <gccore.h>
@@ -85,17 +86,23 @@ namespace GdqRender {
         spaceBg->isUnlit = true;
         scrollContainer->addChild(spaceBg);
 
-        //MeshSceneNode *akappa = new MeshSceneNode();
-        //akappa->meshVertices = MODEL_BILLBOARD_VERTS;
-        //akappa->meshNormals = MODEL_BILLBOARD_NORMS;
-        //akappa->meshUvs = MODEL_BILLBOARD_TEXCOORDS;
-        //akappa->triangleCount = 2;
-        //GXTexObj kappaTex = RenderManager::loadTplTextureFromMemory(kappa_tpl, kappa_tpl_size, kappa);
-        //akappa->texture = &kappaTex;
-        //akappa->getTransform().pos.z = -100.0f;
-        //akappa->getTransform().scl = {20.0f, 20.0f, 20.0f};
-        //akappa->isUnlit = true;
-        //scrollContainer->addChild(akappa);
+        ParticleSceneNode *akappa = new ParticleSceneNode();
+        akappa->meshVertices = MODEL_BILLBOARD_VERTS;
+        akappa->meshNormals = MODEL_BILLBOARD_NORMS;
+        akappa->meshUvs = MODEL_BILLBOARD_TEXCOORDS;
+        akappa->triangleCount = 2;
+        GXTexObj kappaTex = RenderManager::loadTplTextureFromMemory(kappa_tpl, kappa_tpl_size, kappa);
+        akappa->texture = &kappaTex;
+        akappa->getTransform().pos.z = -150.0f;
+        akappa->getTransform().scl = {15.0f, 15.0f, 15.0f};
+        akappa->isUnlit = true;
+        akappa->acceleration = {0.0f, -0.05f, 0.0f};
+        akappa->lifetime = 300;
+        akappa->scaleMultiplier = 0.99f;
+
+        EmitterSceneNode *emitter = new EmitterSceneNode();
+        emitter->particleMesh = akappa;
+        scrollContainer->addChild(emitter);
 
         MeshSceneNode *neoLine = new MeshSceneNode();
         neoLine->meshVertices = MODEL_NEOLINE_VERTS;
@@ -144,6 +151,11 @@ namespace GdqRender {
                     delete gdq2Logo;
                     gdq2Logo = nullptr;
                 }
+            } else if (frameTime > 900) {
+                //Remove the particle emitter after 5 iterations
+                std::vector<SceneNode*> &vec = scrollContainer->getChildren();
+                vec.erase(std::remove(vec.begin(), vec.end(), emitter), vec.end());
+                //delete emitter; //TODO: Deleting this seems to crash the program
             } else if (frameTime > 136) {
                 gdqLogo->setVisible(false);
                 gdq2Logo->setVisible(true);

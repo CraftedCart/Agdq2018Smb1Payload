@@ -14,6 +14,11 @@ class SceneNode {
     public:
         virtual ~SceneNode();
 
+        /**
+         * @brief Called every frame, before rendering
+         */
+        virtual void tick();
+
         Transform& getTransform();
         void setVisible(bool visible);
         bool isVisible();
