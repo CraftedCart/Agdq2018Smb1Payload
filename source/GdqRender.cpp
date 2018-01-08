@@ -22,6 +22,11 @@
 #include "models/neolineverts.h"
 #include "models/neolinenorms.h"
 #include "models/neolinetexcoords.h"
+#include "models/billboardverts.h"
+#include "models/billboardnorms.h"
+#include "models/billboardtexcoords.h"
+#include "kappa_tpl.h"
+#include "kappa.h"
 #include "MeshSceneNode.hpp"
 #include "GdqRender.hpp"
 #include "RenderManager.hpp"
@@ -79,6 +84,18 @@ namespace GdqRender {
         spaceBg->getTransform().pos.z = -300.0f;
         spaceBg->isUnlit = true;
         scrollContainer->addChild(spaceBg);
+
+        //MeshSceneNode *akappa = new MeshSceneNode();
+        //akappa->meshVertices = MODEL_BILLBOARD_VERTS;
+        //akappa->meshNormals = MODEL_BILLBOARD_NORMS;
+        //akappa->meshUvs = MODEL_BILLBOARD_TEXCOORDS;
+        //akappa->triangleCount = 2;
+        //GXTexObj kappaTex = RenderManager::loadTplTextureFromMemory(kappa_tpl, kappa_tpl_size, kappa);
+        //akappa->texture = &kappaTex;
+        //akappa->getTransform().pos.z = -100.0f;
+        //akappa->getTransform().scl = {20.0f, 20.0f, 20.0f};
+        //akappa->isUnlit = true;
+        //scrollContainer->addChild(akappa);
 
         MeshSceneNode *neoLine = new MeshSceneNode();
         neoLine->meshVertices = MODEL_NEOLINE_VERTS;

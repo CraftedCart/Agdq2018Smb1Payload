@@ -55,6 +55,9 @@ namespace RenderManager {
         GX_SetNumTexGens(0);
         GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
         GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+
+        //Make alpha mapping work
+        GX_SetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
     }
 
     void draw(SceneNode *rootNode) {
@@ -81,6 +84,8 @@ namespace RenderManager {
             Mtx childMatrix;
             memcpy(childMatrix, transformMatrix, sizeof(Mtx));
 
+            guMtxScaleApply(childMatrix, childMatrix, transform.scl.x, transform.scl.y, transform.scl.z);
+
             guMtxTransApply(childMatrix, childMatrix, transform.pos.x, transform.pos.y, transform.pos.z);
 
             Mtx rotZ;
@@ -92,8 +97,6 @@ namespace RenderManager {
             guMtxConcat(childMatrix, rotZ, childMatrix);
             guMtxConcat(childMatrix, rotY, childMatrix);
             guMtxConcat(childMatrix, rotX, childMatrix);
-
-            guMtxScaleApply(childMatrix, childMatrix, transform.scl.x, transform.scl.y, transform.scl.z);
 
             if (MeshSceneNode *mesh = dynamic_cast<MeshSceneNode*>(child)) drawMeshNode(mesh, childMatrix);
             drawSceneGraph(child, childMatrix);
@@ -204,6 +207,7 @@ namespace RenderManager {
         if (readyForCopy == GX_TRUE) {
             GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
             GX_SetColorUpdate(GX_TRUE);
+            GX_SetAlphaUpdate(GX_TRUE);
             GX_CopyDisp(frameBuffer, GX_TRUE);
             GX_Flush();
             readyForCopy = GX_FALSE;
