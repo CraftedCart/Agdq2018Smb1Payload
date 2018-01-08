@@ -26,6 +26,7 @@
 #include "GdqRender.hpp"
 #include "RenderManager.hpp"
 #include <gccore.h>
+#include <algorithm>
 
 namespace GdqRender {
     SceneNode *rootNode;
@@ -90,54 +91,43 @@ namespace GdqRender {
         scrollContainer->addChild(neoLine);
 
         while (1) {
-            gdqLogo->getTransform().rot.y += 0.015;
-            gdqLogo->getTransform().rot.z += 0.001;
-            //gdqLogo->getTransform().rot.x += 0.001;
-            gdq2Logo->getTransform().rot.y += 0.015;
-            gdq2Logo->getTransform().rot.z += 0.001;
+            if (gdqLogo != nullptr) {
+                gdqLogo->getTransform().rot.y += 0.015;
+                gdqLogo->getTransform().rot.z += 0.001;
+                //gdqLogo->getTransform().rot.x += 0.001;
+                gdq2Logo->getTransform().rot.y += 0.015;
+                gdq2Logo->getTransform().rot.z += 0.001;
 
-            if (gdq2Logo->getTransform().scl.x < 1.0f) {
-                gdqLogo->getTransform().scl.x += 0.01f;
-                gdqLogo->getTransform().scl.y += 0.01f;
-                gdqLogo->getTransform().scl.z += 0.01f;
-                gdq2Logo->getTransform().scl.x += 0.01f;
-                gdq2Logo->getTransform().scl.y += 0.01f;
-                gdq2Logo->getTransform().scl.z += 0.01f;
-            } else {
-                gdqLogo->getTransform().scl.x = 1.0f;
-                gdqLogo->getTransform().scl.y = 1.0f;
-                gdqLogo->getTransform().scl.z = 1.0f;
-                gdq2Logo->getTransform().scl.x = 1.0f;
-                gdq2Logo->getTransform().scl.y = 1.0f;
-                gdq2Logo->getTransform().scl.z = 1.0f;
+                if (gdq2Logo->getTransform().scl.x < 1.0f) {
+                    gdqLogo->getTransform().scl.x += 0.01f;
+                    gdqLogo->getTransform().scl.y += 0.01f;
+                    gdqLogo->getTransform().scl.z += 0.01f;
+                    gdq2Logo->getTransform().scl.x += 0.01f;
+                    gdq2Logo->getTransform().scl.y += 0.01f;
+                    gdq2Logo->getTransform().scl.z += 0.01f;
+                } else {
+                    gdqLogo->getTransform().scl.x = 1.0f;
+                    gdqLogo->getTransform().scl.y = 1.0f;
+                    gdqLogo->getTransform().scl.z = 1.0f;
+                    gdq2Logo->getTransform().scl.x = 1.0f;
+                    gdq2Logo->getTransform().scl.y = 1.0f;
+                    gdq2Logo->getTransform().scl.z = 1.0f;
+                }
             }
 
             //GDQ/GDQ2 logo flickering
-            if (frameTime > 60) {
-                gdqLogo->setVisible(false);
-                gdq2Logo->setVisible(true);
-            }
-            if (frameTime > 68) {
-                gdqLogo->setVisible(true);
-                gdq2Logo->setVisible(false);
-            }
-            if (frameTime > 100) {
-                gdqLogo->setVisible(false);
-                gdq2Logo->setVisible(true);
-            }
-            if (frameTime > 108) {
-                gdqLogo->setVisible(true);
-                gdq2Logo->setVisible(false);
-            }
-            if (frameTime > 120) {
-                gdqLogo->setVisible(false);
-                gdq2Logo->setVisible(true);
-            }
-            if (frameTime > 128) {
-                gdqLogo->setVisible(true);
-                gdq2Logo->setVisible(false);
-            }
-            if (frameTime > 136) {
+            if (frameTime > 1200) {
+                if (gdqLogo != nullptr) {
+                    //Delete both GDQ logo nodes
+                    std::vector<SceneNode*> &vec = scrollContainer->getChildren();
+                    vec.erase(std::remove(vec.begin(), vec.end(), gdqLogo), vec.end());
+                    delete gdqLogo;
+                    gdqLogo = nullptr;
+                    vec.erase(std::remove(vec.begin(), vec.end(), gdq2Logo), vec.end());
+                    delete gdq2Logo;
+                    gdq2Logo = nullptr;
+                }
+            } else if (frameTime > 136) {
                 gdqLogo->setVisible(false);
                 gdq2Logo->setVisible(true);
 
@@ -148,15 +138,28 @@ namespace GdqRender {
                     gdq2Logo->getTransform().scl.z = 0.5f;
                     hasSetGdq2Scale = true;
                 }
+            } else if (frameTime > 128) {
+                gdqLogo->setVisible(true);
+                gdq2Logo->setVisible(false);
+            } else if (frameTime > 120) {
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(true);
+            } else if (frameTime > 108) {
+                gdqLogo->setVisible(true);
+                gdq2Logo->setVisible(false);
+            } else if (frameTime > 100) {
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(true);
+            } else if (frameTime > 68) {
+                gdqLogo->setVisible(true);
+                gdq2Logo->setVisible(false);
+            } else if (frameTime > 60) {
+                gdqLogo->setVisible(false);
+                gdq2Logo->setVisible(true);
             }
 
             if (frameTime > 600) {
                 scrollContainer->getTransform().pos.y += 0.2f;
-            }
-
-            if (frameTime > 1200) {
-                gdqLogo->setVisible(false);
-                gdq2Logo->setVisible(false);
             }
 
             RenderManager::draw(rootNode);
