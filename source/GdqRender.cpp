@@ -33,6 +33,36 @@
 #include "models/credits/tasauthorsbodyverts.h"
 #include "models/credits/tasauthorsbodynorms.h"
 #include "models/credits/tasauthorsbodytexcoords.h"
+#include "models/credits/revengheadverts.h"
+#include "models/credits/revengheadnorms.h"
+#include "models/credits/revengheadtexcoords.h"
+#include "models/credits/revengbodyverts.h"
+#include "models/credits/revengbodynorms.h"
+#include "models/credits/revengbodytexcoords.h"
+#include "models/credits/customreplayheadverts.h"
+#include "models/credits/customreplayheadnorms.h"
+#include "models/credits/customreplayheadtexcoords.h"
+#include "models/credits/customreplaybodyverts.h"
+#include "models/credits/customreplaybodynorms.h"
+#include "models/credits/customreplaybodytexcoords.h"
+#include "models/credits/tooldevheadverts.h"
+#include "models/credits/tooldevheadnorms.h"
+#include "models/credits/tooldevheadtexcoords.h"
+#include "models/credits/tooldevbodyverts.h"
+#include "models/credits/tooldevbodynorms.h"
+#include "models/credits/tooldevbodytexcoords.h"
+#include "models/credits/payloadheadverts.h"
+#include "models/credits/payloadheadnorms.h"
+#include "models/credits/payloadheadtexcoords.h"
+#include "models/credits/payloadbodyverts.h"
+#include "models/credits/payloadbodynorms.h"
+#include "models/credits/payloadbodytexcoords.h"
+#include "models/credits/presentersheadverts.h"
+#include "models/credits/presentersheadnorms.h"
+#include "models/credits/presentersheadtexcoords.h"
+#include "models/credits/presentersbodyverts.h"
+#include "models/credits/presentersbodynorms.h"
+#include "models/credits/presentersbodytexcoords.h"
 #include "MeshSceneNode.hpp"
 #include "EmitterSceneNode.hpp"
 #include "GdqRender.hpp"
@@ -148,6 +178,141 @@ namespace GdqRender {
         tasAuthorsBody->getTransform().pos.x = -256.0f;
         tasAuthors->addChild(tasAuthorsBody);
 
+        SceneNode *revEng = new SceneNode();
+        revEng->getTransform().pos.x = -40.0f;
+        revEng->getTransform().pos.y = -140.0f;
+        revEng->getTransform().pos.z = -50.0f;
+        revEng->interpTargetTransform = revEng->getTransform();
+        revEng->getTransform().pos.x = -120.0f;
+        revEng->getTransform().rot.y = M_PI;
+        revEng->setVisible(false);
+        scrollContainer->addChild(revEng);
+
+        MeshSceneNode *revEngHead = new MeshSceneNode();
+        revEngHead->meshVertices = MODEL_REVENGHEAD_VERTS;
+        revEngHead->meshNormals = MODEL_REVENGHEAD_NORMS;
+        revEngHead->meshUvs = MODEL_REVENGHEAD_TEXCOORDS;
+        revEngHead->triangleCount = 5282;
+        revEngHead->texture = &pallete2Tex;
+        revEng->addChild(revEngHead);
+
+        MeshSceneNode *revEngBody = new MeshSceneNode();
+        revEngBody->meshVertices = MODEL_REVENGBODY_VERTS;
+        revEngBody->meshNormals = MODEL_REVENGBODY_NORMS;
+        revEngBody->meshUvs = MODEL_REVENGBODY_TEXCOORDS;
+        revEngBody->triangleCount = 10329;
+        revEngBody->texture = &pallete2Tex;
+        revEngBody->getTransform().pos.x = -256.0f;
+        revEng->addChild(revEngBody);
+
+        SceneNode *customReplay = new SceneNode();
+        customReplay->getTransform().pos.x = -40.0f;
+        customReplay->getTransform().pos.y = -202.0f;
+        customReplay->getTransform().pos.z = -50.0f;
+        customReplay->interpTargetTransform = customReplay->getTransform();
+        customReplay->getTransform().pos.x = -120.0f;
+        customReplay->getTransform().rot.y = M_PI;
+        customReplay->setVisible(false);
+        scrollContainer->addChild(customReplay);
+
+        MeshSceneNode *customReplayHead = new MeshSceneNode();
+        customReplayHead->meshVertices = MODEL_CUSTOMREPLAYHEAD_VERTS;
+        customReplayHead->meshNormals = MODEL_CUSTOMREPLAYHEAD_NORMS;
+        customReplayHead->meshUvs = MODEL_CUSTOMREPLAYHEAD_TEXCOORDS;
+        customReplayHead->triangleCount = 5792;
+        customReplayHead->texture = &pallete2Tex;
+        customReplay->addChild(customReplayHead);
+
+        MeshSceneNode *customReplayBody = new MeshSceneNode();
+        customReplayBody->meshVertices = MODEL_CUSTOMREPLAYBODY_VERTS;
+        customReplayBody->meshNormals = MODEL_CUSTOMREPLAYBODY_NORMS;
+        customReplayBody->meshUvs = MODEL_CUSTOMREPLAYBODY_TEXCOORDS;
+        customReplayBody->triangleCount = 16081;
+        customReplayBody->texture = &pallete2Tex;
+        customReplayBody->getTransform().pos.x = -256.0f;
+        customReplay->addChild(customReplayBody);
+
+        SceneNode *toolDev = new SceneNode();
+        toolDev->getTransform().pos.x = -40.0f;
+        toolDev->getTransform().pos.y = -282.0f;
+        toolDev->getTransform().pos.z = -50.0f;
+        toolDev->interpTargetTransform = toolDev->getTransform();
+        toolDev->getTransform().pos.x = -120.0f;
+        toolDev->getTransform().rot.y = M_PI;
+        toolDev->setVisible(false);
+        scrollContainer->addChild(toolDev);
+
+        MeshSceneNode *toolDevHead = new MeshSceneNode();
+        toolDevHead->meshVertices = MODEL_TOOLDEVHEAD_VERTS;
+        toolDevHead->meshNormals = MODEL_TOOLDEVHEAD_NORMS;
+        toolDevHead->meshUvs = MODEL_TOOLDEVHEAD_TEXCOORDS;
+        toolDevHead->triangleCount = 3854;
+        toolDevHead->texture = &pallete2Tex;
+        toolDev->addChild(toolDevHead);
+
+        MeshSceneNode *toolDevBody = new MeshSceneNode();
+        toolDevBody->meshVertices = MODEL_TOOLDEVBODY_VERTS;
+        toolDevBody->meshNormals = MODEL_TOOLDEVBODY_NORMS;
+        toolDevBody->meshUvs = MODEL_TOOLDEVBODY_TEXCOORDS;
+        toolDevBody->triangleCount = 14330;
+        toolDevBody->texture = &pallete2Tex;
+        toolDevBody->getTransform().pos.x = -256.0f;
+        toolDev->addChild(toolDevBody);
+
+        SceneNode *payload = new SceneNode();
+        payload->getTransform().pos.x = -40.0f;
+        payload->getTransform().pos.y = -336.0f;
+        payload->getTransform().pos.z = -50.0f;
+        payload->interpTargetTransform = payload->getTransform();
+        payload->getTransform().pos.x = -120.0f;
+        payload->getTransform().rot.y = M_PI;
+        payload->setVisible(false);
+        scrollContainer->addChild(payload);
+
+        MeshSceneNode *payloadHead = new MeshSceneNode();
+        payloadHead->meshVertices = MODEL_PAYLOADHEAD_VERTS;
+        payloadHead->meshNormals = MODEL_PAYLOADHEAD_NORMS;
+        payloadHead->meshUvs = MODEL_PAYLOADHEAD_TEXCOORDS;
+        payloadHead->triangleCount = 4628;
+        payloadHead->texture = &pallete2Tex;
+        payload->addChild(payloadHead);
+
+        MeshSceneNode *payloadBody = new MeshSceneNode();
+        payloadBody->meshVertices = MODEL_PAYLOADBODY_VERTS;
+        payloadBody->meshNormals = MODEL_PAYLOADBODY_NORMS;
+        payloadBody->meshUvs = MODEL_PAYLOADBODY_TEXCOORDS;
+        payloadBody->triangleCount = 3529;
+        payloadBody->texture = &pallete2Tex;
+        payloadBody->getTransform().pos.x = -256.0f;
+        payload->addChild(payloadBody);
+
+        SceneNode *presenters = new SceneNode();
+        presenters->getTransform().pos.x = -40.0f;
+        presenters->getTransform().pos.y = -359.0f;
+        presenters->getTransform().pos.z = -50.0f;
+        presenters->interpTargetTransform = presenters->getTransform();
+        presenters->getTransform().pos.x = -120.0f;
+        presenters->getTransform().rot.y = M_PI;
+        presenters->setVisible(false);
+        scrollContainer->addChild(presenters);
+
+        MeshSceneNode *presentersHead = new MeshSceneNode();
+        presentersHead->meshVertices = MODEL_PRESENTERSHEAD_VERTS;
+        presentersHead->meshNormals = MODEL_PRESENTERSHEAD_NORMS;
+        presentersHead->meshUvs = MODEL_PRESENTERSHEAD_TEXCOORDS;
+        presentersHead->triangleCount = 3419;
+        presentersHead->texture = &pallete2Tex;
+        presenters->addChild(presentersHead);
+
+        MeshSceneNode *presentersBody = new MeshSceneNode();
+        presentersBody->meshVertices = MODEL_PRESENTERSBODY_VERTS;
+        presentersBody->meshNormals = MODEL_PRESENTERSBODY_NORMS;
+        presentersBody->meshUvs = MODEL_PRESENTERSBODY_TEXCOORDS;
+        presentersBody->triangleCount = 3434;
+        presentersBody->texture = &pallete2Tex;
+        presentersBody->getTransform().pos.x = -256.0f;
+        presenters->addChild(presentersBody);
+
         //////////////// End Credits ////////////////
 
         while (1) {
@@ -176,7 +341,43 @@ namespace GdqRender {
             }
 
             //Credits
-            if (frameTime == 900) {
+            //Hiding
+            if (frameTime == 2800) {
+                presenters->setVisible(false);
+            } else if (frameTime == 2600) {
+                payload->setVisible(false);
+            } else if (frameTime == 2500) {
+                toolDev->setVisible(false);
+            } else if (frameTime == 2400) {
+                customReplay->setVisible(false);
+            } else if (frameTime == 2000) {
+                revEng->setVisible(false);
+            } else if (frameTime == 1600) {
+                tasAuthors->setVisible(false);
+            }
+
+            //Showing
+            if (frameTime == 2000) {
+                presenters->interpSpeed = 0.02f;
+                presentersBody->interpSpeed = 0.02f;
+                presenters->setVisible(true);
+            } else if (frameTime == 1900) {
+                payload->interpSpeed = 0.02f;
+                payloadBody->interpSpeed = 0.02f;
+                payload->setVisible(true);
+            } else if (frameTime == 1600) {
+                toolDev->interpSpeed = 0.02f;
+                toolDevBody->interpSpeed = 0.02f;
+                toolDev->setVisible(true);
+            } else if (frameTime == 1350) {
+                customReplay->interpSpeed = 0.02f;
+                customReplayBody->interpSpeed = 0.02f;
+                customReplay->setVisible(true);
+            } else if (frameTime == 1000) {
+                revEng->interpSpeed = 0.02f;
+                revEngBody->interpSpeed = 0.02f;
+                revEng->setVisible(true);
+            } else if (frameTime == 800) {
                 tasAuthors->interpSpeed = 0.02f;
                 tasAuthorsBody->interpSpeed = 0.02f;
                 tasAuthors->setVisible(true);
