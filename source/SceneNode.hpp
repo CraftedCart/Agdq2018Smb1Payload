@@ -12,6 +12,11 @@ class SceneNode {
         std::vector<SceneNode*> children;
 
     public:
+        //I'm too lazy to make setters/getters
+        float interpSpeed = 0.0f;
+        Transform interpTargetTransform;
+
+    public:
         virtual ~SceneNode();
 
         /**
