@@ -27,6 +27,12 @@
 #include "models/billboardtexcoords.h"
 #include "kappa_tpl.h"
 #include "kappa.h"
+#include "models/credits/tasauthorsheadverts.h"
+#include "models/credits/tasauthorsheadnorms.h"
+#include "models/credits/tasauthorsheadtexcoords.h"
+#include "models/credits/tasauthorsbodyverts.h"
+#include "models/credits/tasauthorsbodynorms.h"
+#include "models/credits/tasauthorsbodytexcoords.h"
 #include "MeshSceneNode.hpp"
 #include "EmitterSceneNode.hpp"
 #include "GdqRender.hpp"
@@ -110,9 +116,39 @@ namespace GdqRender {
         neoLine->meshUvs = MODEL_NEOLINE_TEXCOORDS;
         neoLine->triangleCount = 12;
         neoLine->texture = &pallete2Tex;
-        neoLine->getTransform().pos.z = 0.0f;
         neoLine->isUnlit = true;
         scrollContainer->addChild(neoLine);
+
+        //////////////// Credits ////////////////
+
+        SceneNode *tasAuthors = new SceneNode();
+        tasAuthors->getTransform().pos.x = -40.0f;
+        tasAuthors->getTransform().pos.y = -105.0f;
+        tasAuthors->getTransform().pos.z = -50.0f;
+        tasAuthors->interpTargetTransform = tasAuthors->getTransform();
+        tasAuthors->getTransform().pos.x = -120.0f;
+        tasAuthors->getTransform().rot.y = M_PI;
+        tasAuthors->setVisible(false);
+        scrollContainer->addChild(tasAuthors);
+
+        MeshSceneNode *tasAuthorsHead = new MeshSceneNode();
+        tasAuthorsHead->meshVertices = MODEL_TASAUTHORSHEAD_VERTS;
+        tasAuthorsHead->meshNormals = MODEL_TASAUTHORSHEAD_NORMS;
+        tasAuthorsHead->meshUvs = MODEL_TASAUTHORSHEAD_TEXCOORDS;
+        tasAuthorsHead->triangleCount = 2511;
+        tasAuthorsHead->texture = &pallete2Tex;
+        tasAuthors->addChild(tasAuthorsHead);
+
+        MeshSceneNode *tasAuthorsBody = new MeshSceneNode();
+        tasAuthorsBody->meshVertices = MODEL_TASAUTHORSBODY_VERTS;
+        tasAuthorsBody->meshNormals = MODEL_TASAUTHORSBODY_NORMS;
+        tasAuthorsBody->meshUvs = MODEL_TASAUTHORSBODY_TEXCOORDS;
+        tasAuthorsBody->triangleCount = 4855;
+        tasAuthorsBody->texture = &pallete2Tex;
+        tasAuthorsBody->getTransform().pos.x = -256.0f;
+        tasAuthors->addChild(tasAuthorsBody);
+
+        //////////////// End Credits ////////////////
 
         while (1) {
             if (gdqLogo != nullptr) {
@@ -139,50 +175,51 @@ namespace GdqRender {
                 }
             }
 
-            //GDQ/GDQ2 logo flickering
-            if (frameTime > 1200) {
-                if (gdqLogo != nullptr) {
-                    //Delete both GDQ logo nodes
-                    std::vector<SceneNode*> &vec = scrollContainer->getChildren();
-                    vec.erase(std::remove(vec.begin(), vec.end(), gdqLogo), vec.end());
-                    delete gdqLogo;
-                    gdqLogo = nullptr;
-                    vec.erase(std::remove(vec.begin(), vec.end(), gdq2Logo), vec.end());
-                    delete gdq2Logo;
-                    gdq2Logo = nullptr;
-                }
-            } else if (frameTime > 900) {
+            //Credits
+            if (frameTime == 900) {
+                tasAuthors->interpSpeed = 0.02f;
+                tasAuthorsBody->interpSpeed = 0.02f;
+                tasAuthors->setVisible(true);
+            }
+
+            //GDQ/GDQ2 logo flickering from this if onwards
+            if (frameTime == 1200) {
+                //Delete both GDQ logo nodes
+                std::vector<SceneNode*> &vec = scrollContainer->getChildren();
+                vec.erase(std::remove(vec.begin(), vec.end(), gdqLogo), vec.end());
+                delete gdqLogo;
+                gdqLogo = nullptr;
+                vec.erase(std::remove(vec.begin(), vec.end(), gdq2Logo), vec.end());
+                delete gdq2Logo;
+                gdq2Logo = nullptr;
+            } else if (frameTime == 900) {
                 //Remove the particle emitter after 5 iterations
                 std::vector<SceneNode*> &vec = scrollContainer->getChildren();
                 vec.erase(std::remove(vec.begin(), vec.end(), emitter), vec.end());
-                //delete emitter; //TODO: Deleting this seems to crash the program
-            } else if (frameTime > 136) {
+                delete emitter;
+            } else if (frameTime == 136) {
                 gdqLogo->setVisible(false);
                 gdq2Logo->setVisible(true);
 
-                static bool hasSetGdq2Scale = false;
-                if (!hasSetGdq2Scale) {
-                    gdq2Logo->getTransform().scl.x = 0.5f;
-                    gdq2Logo->getTransform().scl.y = 0.5f;
-                    gdq2Logo->getTransform().scl.z = 0.5f;
-                    hasSetGdq2Scale = true;
-                }
-            } else if (frameTime > 128) {
+                gdq2Logo->getTransform().scl.x = 0.5f;
+                gdq2Logo->getTransform().scl.y = 0.5f;
+                gdq2Logo->getTransform().scl.z = 0.5f;
+            } else if (frameTime == 128) {
                 gdqLogo->setVisible(true);
                 gdq2Logo->setVisible(false);
-            } else if (frameTime > 120) {
+            } else if (frameTime == 120) {
                 gdqLogo->setVisible(false);
                 gdq2Logo->setVisible(true);
-            } else if (frameTime > 108) {
+            } else if (frameTime == 108) {
                 gdqLogo->setVisible(true);
                 gdq2Logo->setVisible(false);
-            } else if (frameTime > 100) {
+            } else if (frameTime == 100) {
                 gdqLogo->setVisible(false);
                 gdq2Logo->setVisible(true);
-            } else if (frameTime > 68) {
+            } else if (frameTime == 68) {
                 gdqLogo->setVisible(true);
                 gdq2Logo->setVisible(false);
-            } else if (frameTime > 60) {
+            } else if (frameTime == 60) {
                 gdqLogo->setVisible(false);
                 gdq2Logo->setVisible(true);
             }
@@ -194,11 +231,11 @@ namespace GdqRender {
             RenderManager::draw(rootNode);
 
             PAD_Read(pads);
-            if (pads[0].button & PAD_BUTTON_START) {
+            //if (pads[0].button & PAD_BUTTON_START) {
                 //void (*reload)() = (void(*)()) 0x80001800;
                 //reload();
-                return 0;
-            }
+                //return 0;
+            //}
 
             frameTime++;
         }
