@@ -344,7 +344,7 @@ namespace GdqRender {
             //Hiding
             if (frameTime == 2800) {
                 presenters->setVisible(false);
-            } else if (frameTime == 2600) {
+            } else if (frameTime == 2700) {
                 payload->setVisible(false);
             } else if (frameTime == 2500) {
                 toolDev->setVisible(false);
