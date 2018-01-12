@@ -76,7 +76,10 @@
 #include "EmitterSceneNode.hpp"
 #include "GdqRender.hpp"
 #include "RenderManager.hpp"
+#include "theredone_mod.h"
 #include <gccore.h>
+#include <aesndlib.h>
+#include <gcmodplay.h>
 #include <algorithm>
 
 namespace GdqRender {
@@ -85,6 +88,10 @@ namespace GdqRender {
     int execute() {
         PADStatus pads[4];
         RenderManager::init();
+        MODPlay play;
+
+        //Initialise the audio subsystem
+        AESND_Init();
 
         //Set up the scene graph
         rootNode = new SceneNode();
@@ -94,10 +101,14 @@ namespace GdqRender {
             RenderManager::draw(rootNode);
 
             PAD_Read(pads);
-            if (pads[0].button & PAD_BUTTON_START) {
+            if (pads[0].button & PAD_BUTTON_A) {
                 break;
             }
         }
+ 
+        MODPlay_Init(&play);
+        MODPlay_SetMOD(&play, theredone_mod);
+        MODPlay_Start(&play);
 
         u16 frameTime = 0;
 
@@ -503,8 +514,6 @@ namespace GdqRender {
 
             PAD_Read(pads);
             //if (pads[0].button & PAD_BUTTON_START) {
-                //void (*reload)() = (void(*)()) 0x80001800;
-                //reload();
                 //return 0;
             //}
 
