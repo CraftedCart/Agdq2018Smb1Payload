@@ -13,7 +13,8 @@ namespace RenderManager {
     guVector camera = {0.0f, 0.0f, 50.0f};
     guVector up = {0.0f, 1.0f, 0.0F};
     guVector look = {0.0f, 0.0f, -1.0f};
-    GXColor backgroundColor = {33, 33, 33, 255};
+    //GXColor backgroundColor = {33, 33, 33, 255};
+    GXColor backgroundColor = {0, 0, 0, 255};
     void *fifoBuffer = NULL;
 
     void init() {

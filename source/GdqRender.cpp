@@ -45,6 +45,12 @@
 #include "models/credits/customreplaybodyverts.h"
 #include "models/credits/customreplaybodynorms.h"
 #include "models/credits/customreplaybodytexcoords.h"
+#include "models/credits/testerheadverts.h"
+#include "models/credits/testerheadnorms.h"
+#include "models/credits/testerheadtexcoords.h"
+#include "models/credits/testerbodyverts.h"
+#include "models/credits/testerbodynorms.h"
+#include "models/credits/testerbodytexcoords.h"
 #include "models/credits/tooldevheadverts.h"
 #include "models/credits/tooldevheadnorms.h"
 #include "models/credits/tooldevheadtexcoords.h"
@@ -80,10 +86,20 @@ namespace GdqRender {
         PADStatus pads[4];
         RenderManager::init();
 
-        u16 frameTime = 0;
-
         //Set up the scene graph
         rootNode = new SceneNode();
+
+        //Pause screen
+        while (1) {
+            RenderManager::draw(rootNode);
+
+            PAD_Read(pads);
+            if (pads[0].button & PAD_BUTTON_START) {
+                break;
+            }
+        }
+
+        u16 frameTime = 0;
 
         SceneNode *scrollContainer = new SceneNode();
         rootNode->addChild(scrollContainer);
@@ -235,9 +251,36 @@ namespace GdqRender {
         customReplayBody->getTransform().pos.x = -256.0f;
         customReplay->addChild(customReplayBody);
 
+        SceneNode *tester = new SceneNode();
+        tester->getTransform().pos.x = -40.0f;
+        tester->getTransform().pos.y = -282.0f;
+        tester->getTransform().pos.z = -50.0f;
+        tester->interpTargetTransform = tester->getTransform();
+        tester->getTransform().pos.x = -120.0f;
+        tester->getTransform().rot.y = M_PI;
+        tester->setVisible(false);
+        scrollContainer->addChild(tester);
+
+        MeshSceneNode *testerHead = new MeshSceneNode();
+        testerHead->meshVertices = MODEL_TESTERHEAD_VERTS;
+        testerHead->meshNormals = MODEL_TESTERHEAD_NORMS;
+        testerHead->meshUvs = MODEL_TESTERHEAD_TEXCOORDS;
+        testerHead->triangleCount = 1843;
+        testerHead->texture = &pallete2Tex;
+        tester->addChild(testerHead);
+
+        MeshSceneNode *testerBody = new MeshSceneNode();
+        testerBody->meshVertices = MODEL_TESTERBODY_VERTS;
+        testerBody->meshNormals = MODEL_TESTERBODY_NORMS;
+        testerBody->meshUvs = MODEL_TESTERBODY_TEXCOORDS;
+        testerBody->triangleCount = 3264;
+        testerBody->texture = &pallete2Tex;
+        testerBody->getTransform().pos.x = -256.0f;
+        tester->addChild(testerBody);
+
         SceneNode *toolDev = new SceneNode();
         toolDev->getTransform().pos.x = -40.0f;
-        toolDev->getTransform().pos.y = -282.0f;
+        toolDev->getTransform().pos.y = -306.0f;
         toolDev->getTransform().pos.z = -50.0f;
         toolDev->interpTargetTransform = toolDev->getTransform();
         toolDev->getTransform().pos.x = -120.0f;
@@ -264,7 +307,7 @@ namespace GdqRender {
 
         SceneNode *payload = new SceneNode();
         payload->getTransform().pos.x = -40.0f;
-        payload->getTransform().pos.y = -336.0f;
+        payload->getTransform().pos.y = -360.0f;
         payload->getTransform().pos.z = -50.0f;
         payload->interpTargetTransform = payload->getTransform();
         payload->getTransform().pos.x = -120.0f;
@@ -291,7 +334,7 @@ namespace GdqRender {
 
         SceneNode *presenters = new SceneNode();
         presenters->getTransform().pos.x = -40.0f;
-        presenters->getTransform().pos.y = -376.0f;
+        presenters->getTransform().pos.y = -400.0f;
         presenters->getTransform().pos.z = -50.0f;
         presenters->interpTargetTransform = presenters->getTransform();
         presenters->getTransform().pos.x = -120.0f;
@@ -320,7 +363,7 @@ namespace GdqRender {
         endingBody->meshVertices = MODEL_ENDING_VERTS;
         endingBody->meshNormals = MODEL_ENDING_NORMS;
         endingBody->meshUvs = MODEL_ENDING_TEXCOORDS;
-        endingBody->triangleCount = 12484;
+        endingBody->triangleCount = 12317;
         endingBody->texture = &pallete2Tex;
         endingBody->getTransform().pos.x = -35.0f;
         endingBody->getTransform().pos.y = -200.0f;
@@ -368,6 +411,8 @@ namespace GdqRender {
                 toolDev->setVisible(false);
             } else if (frameTime == 2400) {
                 customReplay->setVisible(false);
+            } else if (frameTime == 2200) {
+                tester->setVisible(false);
             } else if (frameTime == 2000) {
                 revEng->setVisible(false);
             } else if (frameTime == 1600) {
@@ -389,6 +434,10 @@ namespace GdqRender {
                 toolDev->interpSpeed = 0.02f;
                 toolDevBody->interpSpeed = 0.02f;
                 toolDev->setVisible(true);
+            } else if (frameTime == 1500) {
+                tester->interpSpeed = 0.02f;
+                testerBody->interpSpeed = 0.02f;
+                tester->setVisible(true);
             } else if (frameTime == 1350) {
                 customReplay->interpSpeed = 0.02f;
                 customReplayBody->interpSpeed = 0.02f;
@@ -453,11 +502,11 @@ namespace GdqRender {
             RenderManager::draw(rootNode);
 
             PAD_Read(pads);
-            if (pads[0].button & PAD_BUTTON_START) {
+            //if (pads[0].button & PAD_BUTTON_START) {
                 //void (*reload)() = (void(*)()) 0x80001800;
                 //reload();
-                return 0;
-            }
+                //return 0;
+            //}
 
             if (frameTime == 300) frameTime = 600;
             if (frameTime >= 600 && frameTime % 4 == 0) frameTime++; //Yes increment it again - everything needs to go faster
