@@ -96,6 +96,8 @@ namespace GdqRender {
         //Set up the scene graph
         rootNode = new SceneNode();
 
+        bool isBlue = true;
+        bool bDown = false;
         //Pause screen
         while (1) {
             RenderManager::draw(rootNode);
@@ -103,6 +105,20 @@ namespace GdqRender {
             PAD_Read(pads);
             if (pads[0].button & PAD_BUTTON_A) {
                 break;
+            }
+
+            if (pads[0].button & PAD_BUTTON_B && !bDown) {
+                bDown = true;
+                if (isBlue) {
+                    RenderManager::backgroundColor = {0, 255, 0, 255};
+                } else {
+                    RenderManager::backgroundColor = {0, 0, 255, 255};
+                }
+                isBlue = !isBlue;
+            }
+
+            if (!(pads[0].button & PAD_BUTTON_B)) {
+                bDown = false;
             }
         }
  

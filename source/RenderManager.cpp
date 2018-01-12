@@ -14,7 +14,7 @@ namespace RenderManager {
     guVector up = {0.0f, 1.0f, 0.0F};
     guVector look = {0.0f, 0.0f, -1.0f};
     //GXColor backgroundColor = {33, 33, 33, 255};
-    GXColor backgroundColor = {0, 0, 0, 255};
+    GXColor backgroundColor = {0, 0, 255, 255};
     void *fifoBuffer = NULL;
 
     void init() {
@@ -62,6 +62,8 @@ namespace RenderManager {
     }
 
     void draw(SceneNode *rootNode) {
+        GX_SetCopyClear(backgroundColor, 0x00FFFFFF);
+
         guLookAt(viewMatrix, &camera, &up, &look);
         GX_SetViewport(0, 0, screenMode->fbWidth, screenMode->efbHeight, 0, 1);
         GX_InvVtxCache();
