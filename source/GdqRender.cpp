@@ -453,11 +453,11 @@ namespace GdqRender {
             RenderManager::draw(rootNode);
 
             PAD_Read(pads);
-            //if (pads[0].button & PAD_BUTTON_START) {
+            if (pads[0].button & PAD_BUTTON_START) {
                 //void (*reload)() = (void(*)()) 0x80001800;
                 //reload();
-                //return 0;
-            //}
+                return 0;
+            }
 
             if (frameTime == 300) frameTime = 600;
             if (frameTime >= 600 && frameTime % 4 == 0) frameTime++; //Yes increment it again - everything needs to go faster
