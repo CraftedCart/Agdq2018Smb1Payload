@@ -63,6 +63,9 @@
 #include "models/credits/presentersbodyverts.h"
 #include "models/credits/presentersbodynorms.h"
 #include "models/credits/presentersbodytexcoords.h"
+#include "models/credits/endingverts.h"
+#include "models/credits/endingnorms.h"
+#include "models/credits/endingtexcoords.h"
 #include "MeshSceneNode.hpp"
 #include "EmitterSceneNode.hpp"
 #include "GdqRender.hpp"
@@ -273,7 +276,7 @@ namespace GdqRender {
         payloadHead->meshVertices = MODEL_PAYLOADHEAD_VERTS;
         payloadHead->meshNormals = MODEL_PAYLOADHEAD_NORMS;
         payloadHead->meshUvs = MODEL_PAYLOADHEAD_TEXCOORDS;
-        payloadHead->triangleCount = 4628;
+        payloadHead->triangleCount = 7956;
         payloadHead->texture = &pallete2Tex;
         payload->addChild(payloadHead);
 
@@ -288,7 +291,7 @@ namespace GdqRender {
 
         SceneNode *presenters = new SceneNode();
         presenters->getTransform().pos.x = -40.0f;
-        presenters->getTransform().pos.y = -359.0f;
+        presenters->getTransform().pos.y = -376.0f;
         presenters->getTransform().pos.z = -50.0f;
         presenters->interpTargetTransform = presenters->getTransform();
         presenters->getTransform().pos.x = -120.0f;
@@ -312,6 +315,21 @@ namespace GdqRender {
         presentersBody->texture = &pallete2Tex;
         presentersBody->getTransform().pos.x = -256.0f;
         presenters->addChild(presentersBody);
+
+        MeshSceneNode *endingBody = new MeshSceneNode();
+        endingBody->meshVertices = MODEL_ENDING_VERTS;
+        endingBody->meshNormals = MODEL_ENDING_NORMS;
+        endingBody->meshUvs = MODEL_ENDING_TEXCOORDS;
+        endingBody->triangleCount = 12484;
+        endingBody->texture = &pallete2Tex;
+        endingBody->getTransform().pos.x = -35.0f;
+        endingBody->getTransform().pos.y = -200.0f;
+        endingBody->getTransform().scl.x = 0.4f;
+        endingBody->getTransform().scl.y = 0.4f;
+        endingBody->getTransform().scl.z = 0.4f;
+        endingBody->setVisible(false);
+        endingBody->isUnlit = true;
+        scrollContainer->addChild(endingBody);
 
         //////////////// End Credits ////////////////
 
@@ -342,7 +360,7 @@ namespace GdqRender {
 
             //Credits
             //Hiding
-            if (frameTime == 2800) {
+            if (frameTime == 2900) {
                 presenters->setVisible(false);
             } else if (frameTime == 2700) {
                 payload->setVisible(false);
@@ -357,7 +375,9 @@ namespace GdqRender {
             }
 
             //Showing
-            if (frameTime == 2000) {
+            if (frameTime == 2300) {
+                endingBody->setVisible(true);
+            } else if (frameTime == 2100) {
                 presenters->interpSpeed = 0.02f;
                 presentersBody->interpSpeed = 0.02f;
                 presenters->setVisible(true);
@@ -425,8 +445,9 @@ namespace GdqRender {
                 gdq2Logo->setVisible(true);
             }
 
-            if (frameTime > 600) {
-                scrollContainer->getTransform().pos.y += 0.2f;
+            if (frameTime > 600 && frameTime< 3075) {
+                //scrollContainer->getTransform().pos.y += 0.2f;
+                scrollContainer->getTransform().pos.y += 0.3f;
             }
 
             RenderManager::draw(rootNode);
@@ -438,6 +459,8 @@ namespace GdqRender {
                 //return 0;
             //}
 
+            if (frameTime == 300) frameTime = 600;
+            if (frameTime >= 600 && frameTime % 4 == 0) frameTime++; //Yes increment it again - everything needs to go faster
             frameTime++;
         }
         return 0;
